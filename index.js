@@ -33,8 +33,10 @@ client.connect()
  var db = client.db('node1');
 
 
-    app.use(cors());
-    app.options("*", cors());
+    app.use(cors({
+      origin:"https://65a98647ad02ea008f183aa4--scintillating-semifreddo-3d5632.netlify.app",
+          credentials:true
+    }));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 const storage = multer.diskStorage({
