@@ -34,7 +34,7 @@ client.connect()
 
 
 app.use(cors({
-    origin: 'https://65a980bf81ad4913653e1708--scintillating-semifreddo-3d5632.netlify.app',
+    origin: true,
     credentials: true,
     optionSuccessStatus:200
 }));
