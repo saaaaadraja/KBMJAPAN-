@@ -19,7 +19,7 @@ const uri = "mongodb+srv://raja_saad:raja1234@node1.qd9xb.mongodb.net/?retryWrit
 const client = new MongoClient(uri,{
   serverApi: {
     version: ServerApiVersion.v1,
-    strict: true,
+    strict: false,
     deprecationErrors: true,
   }
 });
