@@ -34,7 +34,7 @@ client.connect()
 
 
 app.use(cors({
-    origin:"http://localhost:3000",
+    origin:"https://65a980bf81ad4913653e1708--scintillating-semifreddo-3d5632.netlify.app",
     credentials:true
 }));
 app.use(express.json());
