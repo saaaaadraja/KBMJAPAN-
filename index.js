@@ -31,17 +31,6 @@ client.connect()
 })
  .catch((err)=>console.log(err));
  var db = client.db('node1');
-//  app.get('/',async (req,res)=>{
-//   var password = "admin123";
-//   var salt = await bcrypt.genSalt(10);
-//   var encrPassword = await bcrypt.hash(password,salt);
-//    db.collection('myAdmin').insertOne({id:uuidv4, name: 'admin', password: encrPassword})
-//    .then((res)=>console.log(res))
-//    .catch((err)=>console.log(err))
-//  })
- 
-
-
 
 
 app.use(cors({
@@ -64,45 +53,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 
-
-// app.post('/postData',(req,res)=>{
-//     var {firstName,lastName,country,city,zipCode,streetAddress,contactnumber,email,orderNotes,orderList,shippingType,paymentMethod} = req.body
-//     pool.getConnection((err, connection) => {
-//       if(err) throw err
-//       const params = { 
-//         id:uuidv4(),
-//         firstName,
-//         lastName,
-//         country,
-//         city,
-//         zipCode,
-//         streetAddress,
-//         contactnumber,
-//         email,
-//         orderNotes,
-//         order: orderList,
-//         paymentMethod,
-//         discount:req.body.discount,
-//         date:Date.now()}
-//       connection.query('INSERT INTO aquaorder SET ?', params, (err, rows) => {
-//       connection.release() 
-//       if (!err) {
-//         res.status(200).send(params.id);
-//       } else {
-//           console.log(err)
-//       }
-
-//       })
-//   })
-    
-
-// })
-
 app.post('/login', (req,res)=>{
   db.collection('myAdmin').findOne({name:'admin'})
   .then(async (result)=>{
-    // var salt = bcrypt.genSalt(10);
-    // var encrptedPass = await bcrypt.hash(req.body.password,salt);
     var passwordIsValid = await bcrypt.compareSync(
       req.body.password,
       result.password
@@ -116,23 +69,11 @@ app.post('/login', (req,res)=>{
         });
     }
 
-    var token = jwt.sign({id: result._id},'THISISMYSECRETKEYAPIFORAQUABIRDAPP', {
-      expiresIn: 86400
-    });
+    var token = jwt.sign({id: result._id},'THISISMYSECRETKEYAPIFORAQUABIRDAPP');
 
-    return res.cookie("access_token", token, {
-      httpOnly: true,
-    }).status(200)
-      .send({
+    return res.cookie("access_token", token,  { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).send({
         message: "Login successfull...",
       });
-  // } else {
-  //   return res.status(404)
-  //   .send({
-  //     message: "Invalid user name or Password!"
-  //   });
-  // }
-
   })
   .catch((err)=> {
     console.log(err);
@@ -147,6 +88,14 @@ app.post('/login', (req,res)=>{
 })
 
 
+
+app.get('/logout',(req,res)=>{
+  return res
+  .clearCookie("access_token")
+  .status(200)
+  .json({ message: "Successfully logged out 😏 🍀" });
+})
+
 const authorization = (req, res, next) => {
   let token = '';
 if ( req.headers.cookie && req.headers.cookie.split('=')[0] == "access_token") {
@@ -156,8 +105,6 @@ if ( req.headers.cookie && req.headers.cookie.split('=')[0] == "access_token") {
 }else{
 token='';
 }
- 
-    
     if (token == '') {
       return res.sendStatus(403);
     }
@@ -169,17 +116,9 @@ token='';
     }
   };
 
-  app.get('/logout',(req,res)=>{
-    return res
-    .clearCookie("access_token")
-    .status(200)
-    .json({ message: "Successfully logged out 😏 🍀" });
-  })
-  
   app.get("/protected", authorization, (req, res) => {
     return res.status(200).send('Ok');
   });
-
 
 app.post('/add-product',upload.array("files"),(req,res)=>{
  const data = JSON.parse(req.body.data);
@@ -497,7 +436,7 @@ app.post('/update-coupon',(req,res)=>{
     })
 })
   })
-  app.get('/single-coupon/:id',(req,res)=>{
+app.get('/single-coupon/:id',(req,res)=>{
     pool.getConnection((err, connection) => {
       if(err) throw err
       connection.query('SELECT * FROM couponcodes WHERE id = ?', [req.params.id], (err, rows) => {
