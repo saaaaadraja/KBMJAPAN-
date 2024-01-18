@@ -71,7 +71,7 @@ app.post('/login', (req,res)=>{
 
     var token = jwt.sign({id: result._id},'THISISMYSECRETKEYAPIFORAQUABIRDAPP');
 
-    return res.cookie("access_token", token,  { httpOnly: true, secure: true, maxAge: 3600000 }).status(200).send({
+    return res.cookie("access_token", token,  { httpOnly: true, sameSite:'none' ,secure: true, maxAge: 3600000 }).status(200).send({
         message: "Login successfull...",
       });
   })
