@@ -33,11 +33,7 @@ client.connect()
  var db = client.db('node1');
 
 
-app.use(cors({
-    origin: true,
-    credentials: true,
-    optionSuccessStatus:200
-}));
+app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 const storage = multer.diskStorage({
